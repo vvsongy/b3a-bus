@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080a0f">
 <meta name="color-scheme" content="dark">
-<title>B3A · Fu Tai Estate → Shenzhen Bay Port</title>
+<title>B3A · Fu Tai Estate ↔ Shenzhen Bay Port</title>
 <style>
   :root {
     --bg: #07090e;
@@ -693,6 +693,33 @@
     background: linear-gradient(90deg, rgba(255, 179, 64, .9), #ff8a3d);
   }
 
+  /* ── Return direction ──────────────────────────────── */
+  .return-section {
+    margin-top: clamp(38px, 7vw, 56px);
+  }
+
+  .return-heading { margin-bottom: 19px; }
+
+  .return-heading .eyebrow { margin-bottom: 11px; }
+
+  .return-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 2px;
+    margin: 0;
+    font-size: clamp(23px, 3.9vw, 31px);
+    font-weight: 750;
+    letter-spacing: -.04em;
+    line-height: 1.1;
+  }
+
+  .return-title > span:not(.route-arrow) { white-space: nowrap; }
+  .return-title .route-arrow svg { width: 31px; height: 18px; }
+
+  .return-sub { margin-top: 8px; font-size: 12.5px; }
+
   /* ── Page footer ───────────────────────────────────── */
   .page-foot {
     display: flex;
@@ -743,6 +770,7 @@
     .side-stop { display: none; }
     .later-row { grid-template-columns: 46px 1fr auto; padding: 13px 14px; }
     .board-foot { align-items: flex-end; }
+    .return-section { margin-top: 38px; }
   }
 
   @media (max-width: 390px) {
@@ -754,6 +782,7 @@
     .side-clock { font-size: 19px; }
     .route-title { column-gap: 10px; }
     .route-arrow svg { width: 31px; }
+    .return-title { column-gap: 8px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -790,7 +819,7 @@
   <section class="hero" aria-labelledby="routeTitle">
     <div class="eyebrow">
       <span class="route-chip">B3A</span>
-      <span class="eyebrow-text">Citybus · Real-time</span>
+      <span class="eyebrow-text">Citybus · Real-time · Outbound</span>
     </div>
     <h1 class="route-title" id="routeTitle">
       <span>Fu Tai Estate</span>
@@ -810,24 +839,24 @@
     </p>
   </section>
 
-  <section class="board" id="board" aria-label="Next B3A departures from Fu Tai Estate">
+  <section class="board" data-board="outbound" aria-label="Next B3A departures from Fu Tai Estate to Shenzhen Bay Port">
     <div class="board-head">
       <h2>Next departures</h2>
-      <span class="board-clock" id="boardClock">—</span>
+      <span class="board-clock" data-clock>—</span>
     </div>
 
-    <div class="departures" id="departures" aria-live="polite" aria-atomic="false">
+    <div class="departures" data-departures aria-live="polite" aria-atomic="false">
       <div class="skeleton-next"></div>
       <div class="skeleton-row"></div>
       <div class="skeleton-row"></div>
     </div>
 
-    <div class="notice" id="notice" role="status" hidden>
+    <div class="notice" data-notice role="status" hidden>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
         <path d="M12 8v5M12 17h.01"></path>
         <path d="M10.3 3.8 2.6 17.1a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
       </svg>
-      <span id="noticeText">Live update failed.</span>
+      <span data-notice-text>Live update failed.</span>
     </div>
 
     <div class="board-foot">
@@ -836,11 +865,11 @@
           <circle cx="12" cy="12" r="8.7"></circle>
           <path d="M12 7.4V12l3 1.8"></path>
         </svg>
-        <span id="updatedText">Waiting for live data…</span>
+        <span data-updated>Waiting for live data…</span>
         <span class="sep" aria-hidden="true">·</span>
-        <span id="refreshText">Refreshes in 30s</span>
+        <span data-refresh>Refreshes in 30s</span>
       </div>
-      <button class="refresh" id="refreshBtn" type="button" aria-label="Refresh departure times now">
+      <button class="refresh" data-refresh-btn type="button" aria-label="Refresh outbound departure times now">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M20.2 11a8.2 8.2 0 1 0-.6 4.6"></path>
           <path d="M20.4 4.8V11h-6.2"></path>
@@ -850,7 +879,76 @@
     </div>
 
     <div class="progress-track" aria-hidden="true">
-      <div class="progress-bar" id="progressBar"></div>
+      <div class="progress-bar" data-progress></div>
+    </div>
+  </section>
+
+  <section class="return-section" aria-labelledby="returnTitle">
+    <div class="return-heading">
+      <div class="eyebrow">
+        <span class="route-chip">B3A</span>
+        <span class="eyebrow-text">Return direction</span>
+      </div>
+      <h2 class="return-title" id="returnTitle">
+        <span>Shenzhen Bay Port</span>
+        <span class="route-arrow" aria-hidden="true">
+          <svg viewBox="0 0 44 24" fill="none">
+            <path d="M2 12h38M31 3l9 9-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+        <span>Fu Tai</span>
+      </h2>
+      <p class="route-sub return-sub">
+        <span class="zh" lang="zh-Hant">深圳灣口岸</span>
+        <span class="minor-arrow" aria-hidden="true">→</span>
+        <span class="zh" lang="zh-Hant">富泰商場</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span>Alight at Fu Tai Shopping Centre · Castle Peak Road</span>
+      </p>
+    </div>
+
+    <div class="board" data-board="inbound" aria-label="Next B3A departures from Shenzhen Bay Port to Fu Tai">
+      <div class="board-head">
+        <h2>Next departures</h2>
+        <span class="board-clock" data-clock>—</span>
+      </div>
+
+      <div class="departures" data-departures aria-live="polite" aria-atomic="false">
+        <div class="skeleton-next"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+
+      <div class="notice" data-notice role="status" hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 8v5M12 17h.01"></path>
+          <path d="M10.3 3.8 2.6 17.1a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
+        </svg>
+        <span data-notice-text>Live update failed.</span>
+      </div>
+
+      <div class="board-foot">
+        <div class="update">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.7"></circle>
+            <path d="M12 7.4V12l3 1.8"></path>
+          </svg>
+          <span data-updated>Waiting for live data…</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span data-refresh>Refreshes in 30s</span>
+        </div>
+        <button class="refresh" data-refresh-btn type="button" aria-label="Refresh return departure times now">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.2 11a8.2 8.2 0 1 0-.6 4.6"></path>
+            <path d="M20.4 4.8V11h-6.2"></path>
+          </svg>
+          <span>Refresh</span>
+        </button>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-bar" data-progress></div>
+      </div>
     </div>
   </section>
 
@@ -864,24 +962,27 @@
 (() => {
   'use strict';
 
-  const ROUTE = 'B3A';
-  const STOP_ID = '003261'; // Fu Tai Estate, Castle Peak Road
-  const DIRECTION = 'O';    // outbound, towards Shenzhen Bay Port
   const REFRESH_MS = 30000;
-  const API = 'https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/' + STOP_ID + '/' + ROUTE;
+  const API_BASE = 'https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/';
+
+  const CONFIGS = {
+    outbound: {
+      id: 'outbound',
+      dir: 'O',
+      stop: '003261', // Fu Tai Estate, Castle Peak Road
+      arrivalStop: 'Fu Tai Estate'
+    },
+    inbound: {
+      id: 'inbound',
+      dir: 'I',
+      stop: '003262', // Fu Tai Shopping Centre, Castle Peak Road
+      arrivalStop: 'Fu Tai'
+    }
+  };
 
   const el = {
     statusPill: document.getElementById('statusPill'),
-    statusText: document.getElementById('statusText'),
-    boardClock: document.getElementById('boardClock'),
-    departures: document.getElementById('departures'),
-    notice: document.getElementById('notice'),
-    noticeText: document.getElementById('noticeText'),
-    updatedText: document.getElementById('updatedText'),
-    refreshText: document.getElementById('refreshText'),
-    refreshBtn: document.getElementById('refreshBtn'),
-    progressBar: document.getElementById('progressBar'),
-    board: document.getElementById('board')
+    statusText: document.getElementById('statusText')
   };
 
   const clockFmt = new Intl.DateTimeFormat('en-GB', {
@@ -906,17 +1007,12 @@
     month: 'short'
   });
 
-  let buses = [];
-  let lastUpdated = 0;
-  let serverOffset = 0;
-  let loading = false;
-  let lastError = false;
-  let nextRefreshAt = Date.now() + REFRESH_MS;
-  let refreshTimer = null;
+  const boardStates = {
+    outbound: 'connecting',
+    inbound: 'connecting'
+  };
 
-  function now() {
-    return Date.now() + serverOffset;
-  }
+  let serverOffset = 0;
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, (ch) => ({
@@ -947,232 +1043,282 @@
     el.statusText.textContent = text;
   }
 
-  function renderSkeleton() {
-    el.departures.innerHTML =
-      '<div class="skeleton-next"></div>' +
-      '<div class="skeleton-row"></div>' +
-      '<div class="skeleton-row"></div>';
-  }
-
-  function renderEmpty(isError) {
-    const icon = isError
-      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>'
-      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.4" width="16" height="14.2" rx="3.2"></rect><path d="M7.5 7.4h9M7.5 10.7h9M8.2 17.6v2.3M15.8 17.6v2.3"></path></svg>';
-
-    const title = isError ? 'Live times unavailable' : 'No buses showing right now';
-    const copy = isError
-      ? 'Couldn’t reach the Citybus data feed. Check your connection, then try again.'
-      : 'Citybus isn’t reporting an upcoming departure from Fu Tai Estate. Try again in a moment.';
-
-    el.departures.innerHTML =
-      '<div class="empty">' +
-        '<div class="empty-icon" aria-hidden="true">' + icon + '</div>' +
-        '<h3>' + title + '</h3>' +
-        '<p>' + copy + '</p>' +
-        '<button type="button" data-action="retry">Check again</button>' +
-      '</div>';
-  }
-
-  function renderBuses() {
-    if (!buses.length) {
-      renderEmpty(false);
-      return;
-    }
-
-    const first = buses[0];
-    const firstTime = minuteParts(first.etaMs, now());
-    const firstNote = first.remark
-      ? '<span class="remark">' + escapeHtml(first.remark) + '</span>'
-      : 'Live Citybus estimate';
-
-    let html =
-      '<article class="next-card">' +
-        '<div class="next-main">' +
-          '<div class="next-label"><span class="dot" aria-hidden="true"></span>Next bus</div>' +
-          '<div class="next-time' + (firstTime.due ? ' is-due' : '') + '" data-eta="' + first.etaMs + '">' +
-            '<span class="minutes js-minutes">' + firstTime.label + '</span>' +
-            '<span class="unit js-unit">' + firstTime.unit + '</span>' +
-          '</div>' +
-          '<div class="next-note">' + firstNote + '</div>' +
-        '</div>' +
-        '<div class="next-side">' +
-          '<div class="side-label">Arriving at</div>' +
-          '<div class="side-clock">' + first.clock + '</div>' +
-          '<div class="side-stop">Fu Tai Estate</div>' +
-        '</div>' +
-      '</article>';
-
-    if (buses.length > 1) {
-      html += '<div class="later-list">';
-      for (let i = 1; i < buses.length; i += 1) {
-        const bus = buses[i];
-        const time = minuteParts(bus.etaMs, now());
-        html +=
-          '<div class="later-row">' +
-            '<span class="later-label">Then</span>' +
-            '<div class="later-time' + (time.due ? ' is-due' : '') + '" data-eta="' + bus.etaMs + '">' +
-              '<span class="minutes js-minutes">' + time.label + '</span>' +
-              '<span class="unit js-unit">' + time.unit + '</span>' +
-            '</div>' +
-            '<time class="later-clock" datetime="' + new Date(bus.etaMs).toISOString() + '">' + bus.clock + '</time>' +
-          '</div>';
-      }
-      html += '</div>';
+  function updateGlobalStatus() {
+    const states = Object.values(boardStates);
+    if (states.includes('connecting')) {
+      setStatus('connecting', 'Connecting');
+    } else if (states.includes('error')) {
+      setStatus('error', 'Reconnecting');
     } else {
-      html += '<div class="later-empty">No further departures reported yet.</div>';
-    }
-
-    el.departures.innerHTML = html;
-  }
-
-  function updateTimes() {
-    const nowMs = now();
-
-    el.departures.querySelectorAll('[data-eta]').forEach((node) => {
-      const etaMs = Number(node.dataset.eta);
-      if (!Number.isFinite(etaMs)) return;
-
-      const time = minuteParts(etaMs, nowMs);
-      const minutesEl = node.querySelector('.js-minutes');
-      const unitEl = node.querySelector('.js-unit');
-
-      if (minutesEl && minutesEl.textContent !== time.label) {
-        minutesEl.textContent = time.label;
-      }
-      if (unitEl && unitEl.textContent !== time.unit) {
-        unitEl.textContent = time.unit;
-      }
-      node.classList.toggle('is-due', time.due);
-    });
-  }
-
-  function tick() {
-    const nowMs = now();
-    const left = Math.max(0, nextRefreshAt - Date.now());
-    const seconds = Math.max(0, Math.ceil(left / 1000));
-
-    el.boardClock.textContent = dateLabel(nowMs) + ' · ' + clockFmt.format(new Date(nowMs)) + ' HKT';
-
-    if (loading) {
-      el.refreshText.textContent = 'Updating…';
-    } else if (lastError) {
-      el.refreshText.textContent = 'Retry in ' + seconds + 's';
-    } else {
-      el.refreshText.textContent = 'Refreshes in ' + seconds + 's';
-    }
-
-    el.progressBar.style.transform = 'scaleX(' + (left / REFRESH_MS) + ')';
-    updateTimes();
-  }
-
-  function scheduleRefresh() {
-    clearTimeout(refreshTimer);
-    nextRefreshAt = Date.now() + REFRESH_MS;
-    refreshTimer = setTimeout(() => load(), REFRESH_MS);
-  }
-
-  async function load(options = {}) {
-    if (loading) return;
-    loading = true;
-
-    if (options.manual) {
-      el.refreshBtn.classList.add('is-loading');
-      el.refreshBtn.disabled = true;
-    }
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
-
-    try {
-      const response = await fetch(API, {
-        cache: 'no-store',
-        signal: controller.signal,
-        headers: { Accept: 'application/json' }
-      });
-
-      if (!response.ok) {
-        throw new Error('HTTP ' + response.status);
-      }
-
-      const payload = await response.json();
-
-      if (payload && payload.generated_timestamp) {
-        const generated = Date.parse(payload.generated_timestamp);
-        if (Number.isFinite(generated)) {
-          serverOffset = generated - Date.now();
-        }
-      }
-
-      const nowMs = now();
-      const rows = Array.isArray(payload.data) ? payload.data : [];
-
-      buses = rows
-        .filter((item) => item && item.dir === DIRECTION && item.eta)
-        .map((item) => {
-          const etaMs = Date.parse(item.eta);
-          return {
-            etaMs,
-            clock: Number.isFinite(etaMs) ? clockFmt.format(new Date(etaMs)) : '',
-            remark: String(item.rmk_en || '').trim()
-          };
-        })
-        .filter((item) => Number.isFinite(item.etaMs) && item.etaMs > nowMs - 60000)
-        .sort((a, b) => a.etaMs - b.etaMs)
-        .slice(0, 3);
-
-      lastUpdated = nowMs;
-      lastError = false;
-      el.notice.hidden = true;
-      el.board.classList.remove('is-error');
-      renderBuses();
-      updateTimes();
-
       setStatus('live', 'Live');
-      el.updatedText.textContent = 'Updated ' + clockSecondsFmt.format(new Date(lastUpdated)) + ' HKT';
-    } catch (error) {
-      lastError = true;
+    }
+  }
 
-      if (buses.length) {
-        setStatus('error', 'Reconnecting');
-        el.noticeText.textContent = 'Couldn’t refresh the live feed. Showing the last known times.';
-        el.notice.hidden = false;
-        el.board.classList.add('is-error');
-      } else {
-        setStatus('error', 'Offline');
-        renderEmpty(true);
-        el.notice.hidden = true;
-        el.board.classList.add('is-error');
+  function setBoardState(id, state) {
+    boardStates[id] = state;
+    updateGlobalStatus();
+  }
+
+  function createBoard(root, config) {
+    const els = {
+      clock: root.querySelector('[data-clock]'),
+      departures: root.querySelector('[data-departures]'),
+      notice: root.querySelector('[data-notice]'),
+      noticeText: root.querySelector('[data-notice-text]'),
+      updated: root.querySelector('[data-updated]'),
+      refresh: root.querySelector('[data-refresh]'),
+      refreshBtn: root.querySelector('[data-refresh-btn]'),
+      progress: root.querySelector('[data-progress]')
+    };
+
+    const api = API_BASE + config.stop + '/B3A';
+    let buses = [];
+    let lastUpdated = 0;
+    let loading = false;
+    let lastError = false;
+    let nextRefreshAt = Date.now() + REFRESH_MS;
+    let refreshTimer = null;
+
+    function now() {
+      return Date.now() + serverOffset;
+    }
+
+    function renderEmpty(isError) {
+      const icon = isError
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.4" width="16" height="14.2" rx="3.2"></rect><path d="M7.5 7.4h9M7.5 10.7h9M8.2 17.6v2.3M15.8 17.6v2.3"></path></svg>';
+
+      const title = isError ? 'Live times unavailable' : 'No buses showing right now';
+      const copy = isError
+        ? 'Couldn’t reach the Citybus data feed. Check your connection, then try again.'
+        : 'Citybus isn’t reporting an upcoming departure for this direction. Try again in a moment.';
+
+      els.departures.innerHTML =
+        '<div class="empty">' +
+          '<div class="empty-icon" aria-hidden="true">' + icon + '</div>' +
+          '<h3>' + title + '</h3>' +
+          '<p>' + copy + '</p>' +
+          '<button type="button" data-action="retry">Check again</button>' +
+        '</div>';
+    }
+
+    function renderBuses() {
+      if (!buses.length) {
+        renderEmpty(false);
+        return;
       }
-    } finally {
-      clearTimeout(timeout);
-      loading = false;
+
+      const first = buses[0];
+      const firstTime = minuteParts(first.etaMs, now());
+      const firstNote = first.remark
+        ? '<span class="remark">' + escapeHtml(first.remark) + '</span>'
+        : 'Live Citybus estimate';
+
+      let html =
+        '<article class="next-card">' +
+          '<div class="next-main">' +
+            '<div class="next-label"><span class="dot" aria-hidden="true"></span>Next bus</div>' +
+            '<div class="next-time' + (firstTime.due ? ' is-due' : '') + '" data-eta="' + first.etaMs + '">' +
+              '<span class="minutes js-minutes">' + firstTime.label + '</span>' +
+              '<span class="unit js-unit">' + firstTime.unit + '</span>' +
+            '</div>' +
+            '<div class="next-note">' + firstNote + '</div>' +
+          '</div>' +
+          '<div class="next-side">' +
+            '<div class="side-label">Arriving at</div>' +
+            '<div class="side-clock">' + first.clock + '</div>' +
+            '<div class="side-stop">' + escapeHtml(config.arrivalStop) + '</div>' +
+          '</div>' +
+        '</article>';
+
+      if (buses.length > 1) {
+        html += '<div class="later-list">';
+        for (let i = 1; i < buses.length; i += 1) {
+          const bus = buses[i];
+          const time = minuteParts(bus.etaMs, now());
+          html +=
+            '<div class="later-row">' +
+              '<span class="later-label">Then</span>' +
+              '<div class="later-time' + (time.due ? ' is-due' : '') + '" data-eta="' + bus.etaMs + '">' +
+                '<span class="minutes js-minutes">' + time.label + '</span>' +
+                '<span class="unit js-unit">' + time.unit + '</span>' +
+              '</div>' +
+              '<time class="later-clock" datetime="' + new Date(bus.etaMs).toISOString() + '">' + bus.clock + '</time>' +
+            '</div>';
+        }
+        html += '</div>';
+      } else {
+        html += '<div class="later-empty">No further departures reported yet.</div>';
+      }
+
+      els.departures.innerHTML = html;
+    }
+
+    function updateTimes() {
+      const nowMs = now();
+
+      els.departures.querySelectorAll('[data-eta]').forEach((node) => {
+        const etaMs = Number(node.dataset.eta);
+        if (!Number.isFinite(etaMs)) return;
+
+        const time = minuteParts(etaMs, nowMs);
+        const minutesEl = node.querySelector('.js-minutes');
+        const unitEl = node.querySelector('.js-unit');
+
+        if (minutesEl && minutesEl.textContent !== time.label) {
+          minutesEl.textContent = time.label;
+        }
+        if (unitEl && unitEl.textContent !== time.unit) {
+          unitEl.textContent = time.unit;
+        }
+        node.classList.toggle('is-due', time.due);
+      });
+    }
+
+    function tick() {
+      const nowMs = now();
+      const left = Math.max(0, nextRefreshAt - Date.now());
+      const seconds = Math.max(0, Math.ceil(left / 1000));
+
+      els.clock.textContent = dateLabel(nowMs) + ' · ' + clockFmt.format(new Date(nowMs)) + ' HKT';
+
+      if (loading) {
+        els.refresh.textContent = 'Updating…';
+      } else if (lastError) {
+        els.refresh.textContent = 'Retry in ' + seconds + 's';
+      } else {
+        els.refresh.textContent = 'Refreshes in ' + seconds + 's';
+      }
+
+      els.progress.style.transform = 'scaleX(' + (left / REFRESH_MS) + ')';
+      updateTimes();
+    }
+
+    function scheduleRefresh() {
+      clearTimeout(refreshTimer);
+      nextRefreshAt = Date.now() + REFRESH_MS;
+      refreshTimer = setTimeout(() => load(), REFRESH_MS);
+    }
+
+    async function load(options = {}) {
+      if (loading) return;
+      loading = true;
 
       if (options.manual) {
-        el.refreshBtn.classList.remove('is-loading');
-        el.refreshBtn.disabled = false;
+        els.refreshBtn.classList.add('is-loading');
+        els.refreshBtn.disabled = true;
       }
 
-      scheduleRefresh();
-      tick();
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+
+      try {
+        const response = await fetch(api, {
+          cache: 'no-store',
+          signal: controller.signal,
+          headers: { Accept: 'application/json' }
+        });
+
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status);
+        }
+
+        const payload = await response.json();
+
+        if (payload && payload.generated_timestamp) {
+          const generated = Date.parse(payload.generated_timestamp);
+          if (Number.isFinite(generated)) {
+            serverOffset = generated - Date.now();
+          }
+        }
+
+        const nowMs = now();
+        const rows = Array.isArray(payload.data) ? payload.data : [];
+
+        buses = rows
+          .filter((item) => item && item.dir === config.dir && item.eta)
+          .map((item) => {
+            const etaMs = Date.parse(item.eta);
+            return {
+              etaMs,
+              clock: Number.isFinite(etaMs) ? clockFmt.format(new Date(etaMs)) : '',
+              remark: String(item.rmk_en || '').trim()
+            };
+          })
+          .filter((item) => Number.isFinite(item.etaMs) && item.etaMs > nowMs - 60000)
+          .sort((a, b) => a.etaMs - b.etaMs)
+          .slice(0, 3);
+
+        lastUpdated = nowMs;
+        lastError = false;
+        els.notice.hidden = true;
+        root.classList.remove('is-error');
+        renderBuses();
+        updateTimes();
+
+        setBoardState(config.id, 'live');
+        els.updated.textContent = 'Updated ' + clockSecondsFmt.format(new Date(lastUpdated)) + ' HKT';
+      } catch (error) {
+        lastError = true;
+
+        if (buses.length) {
+          els.noticeText.textContent = 'Couldn’t refresh the live feed. Showing the last known times.';
+          els.notice.hidden = false;
+          root.classList.add('is-error');
+          setBoardState(config.id, 'error');
+        } else {
+          renderEmpty(true);
+          els.notice.hidden = true;
+          root.classList.add('is-error');
+          setBoardState(config.id, 'error');
+        }
+      } finally {
+        clearTimeout(timeout);
+        loading = false;
+
+        if (options.manual) {
+          els.refreshBtn.classList.remove('is-loading');
+          els.refreshBtn.disabled = false;
+        }
+
+        scheduleRefresh();
+        tick();
+      }
     }
+
+    els.refreshBtn.addEventListener('click', () => load({ manual: true }));
+
+    els.departures.addEventListener('click', (event) => {
+      const retry = event.target.closest('[data-action="retry"]');
+      if (retry) load({ manual: true });
+    });
+
+    return {
+      load,
+      tick,
+      refreshIfVisible() {
+        if (Date.now() >= nextRefreshAt) load();
+      }
+    };
   }
 
-  el.refreshBtn.addEventListener('click', () => load({ manual: true }));
-
-  el.departures.addEventListener('click', (event) => {
-    const retry = event.target.closest('[data-action="retry"]');
-    if (retry) load({ manual: true });
+  const boards = Array.from(document.querySelectorAll('[data-board]')).map((root) => {
+    const id = root.dataset.board;
+    return createBoard(root, CONFIGS[id]);
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && Date.now() >= nextRefreshAt) {
-      load();
+    if (document.visibilityState === 'visible') {
+      boards.forEach((board) => board.refreshIfVisible());
     }
   });
 
-  tick();
-  setInterval(tick, 1000);
-  load();
+  updateGlobalStatus();
+  boards.forEach((board) => {
+    board.tick();
+    board.load();
+  });
+  setInterval(() => boards.forEach((board) => board.tick()), 1000);
 })();
 </script>
 </body>
