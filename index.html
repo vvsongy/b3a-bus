@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080a0f">
+<meta name="color-scheme" content="dark">
+<title>B3A · Fu Tai Estate → Shenzhen Bay Port</title>
+<style>
+  :root {
+    --bg: #07090e;
+    --panel: #10141c;
+    --panel-2: #151a24;
+    --line: rgba(255, 255, 255, .075);
+    --line-strong: rgba(255, 255, 255, .14);
+    --text: #f4f6f9;
+    --muted: #99a1af;
+    --muted-2: #737c8c;
+    --yellow: #ffd400;
+    --yellow-soft: #ffe45c;
+    --green: #48e08b;
+    --amber: #ffb340;
+    --red: #ff6b6b;
+    --radius: 26px;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+            "Helvetica Neue", "PingFang HK", "Noto Sans HK", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { min-height: 100%; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100svh;
+    margin: 0;
+    padding: clamp(20px, 4vw, 52px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background:
+      radial-gradient(1050px 680px at 82% -14%, rgba(255, 212, 0, .12), transparent 62%),
+      radial-gradient(900px 620px at -18% 112%, rgba(46, 104, 255, .13), transparent 64%),
+      var(--bg);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, .022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .022) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 42%, #000 10%, transparent 76%);
+    mask-image: radial-gradient(ellipse at 50% 42%, #000 10%, transparent 76%);
+  }
+
+  button, a { -webkit-tap-highlight-color: transparent; }
+
+  .shell {
+    position: relative;
+    width: min(760px, 100%);
+    animation: rise .6s cubic-bezier(.22, .8, .3, 1) both;
+  }
+
+  /* ── Top bar ───────────────────────────────────────── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: clamp(34px, 7vw, 56px);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    color: #0a0c10;
+    background: linear-gradient(145deg, var(--yellow-soft), #ffc800);
+    box-shadow: 0 10px 28px rgba(255, 212, 0, .2),
+                inset 0 1px 0 rgba(255, 255, 255, .72);
+  }
+
+  .brand-copy { display: flex; flex-direction: column; gap: 2px; }
+
+  .brand-name {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .19em;
+    line-height: 1.2;
+  }
+
+  .brand-sub {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .01em;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .035);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .13em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color .25s, border-color .25s, background .25s;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: var(--muted-2);
+    transition: background .25s;
+  }
+
+  .status-pill[data-state="live"] {
+    color: #a9f2c9;
+    border-color: rgba(72, 224, 139, .2);
+    background: rgba(72, 224, 139, .07);
+  }
+
+  .status-pill[data-state="live"] .status-dot {
+    background: var(--green);
+    animation: live-pulse 2.2s ease-out infinite;
+  }
+
+  .status-pill[data-state="connecting"] {
+    color: #ffe9a8;
+    border-color: rgba(255, 212, 0, .18);
+    background: rgba(255, 212, 0, .055);
+  }
+
+  .status-pill[data-state="connecting"] .status-dot { background: var(--yellow); }
+
+  .status-pill[data-state="error"] {
+    color: #ffc08e;
+    border-color: rgba(255, 179, 64, .22);
+    background: rgba(255, 179, 64, .07);
+  }
+
+  .status-pill[data-state="error"] .status-dot { background: var(--amber); }
+
+  /* ── Route hero ────────────────────────────────────── */
+  .hero { margin-bottom: 24px; }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .route-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    padding: 0 11px;
+    border-radius: 8px;
+    color: #151200;
+    background: var(--yellow);
+    box-shadow: 0 5px 18px rgba(255, 212, 0, .16);
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .045em;
+  }
+
+  .eyebrow-text {
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  .route-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 13px;
+    row-gap: 2px;
+    margin: 0;
+    font-size: clamp(29px, 5.35vw, 43px);
+    font-weight: 750;
+    letter-spacing: -.045em;
+    line-height: 1.08;
+  }
+
+  .route-title > span:not(.route-arrow) { white-space: nowrap; }
+
+  .route-arrow {
+    display: inline-flex;
+    align-items: center;
+    color: var(--yellow);
+  }
+
+  .route-arrow svg { width: 40px; height: 22px; display: block; }
+
+  .route-sub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .route-sub .zh { color: #c6ccd6; }
+  .route-sub .minor-arrow { color: var(--muted-2); }
+  .route-sub .sep { color: #4b5361; }
+
+  /* ── Departure board ───────────────────────────────── */
+  .board {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(18px, 3.5vw, 28px);
+    padding-bottom: clamp(20px, 3.5vw, 28px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background:
+      radial-gradient(620px 280px at 100% 0%, rgba(255, 212, 0, .055), transparent 68%),
+      linear-gradient(165deg, rgba(23, 28, 39, .94), rgba(12, 15, 22, .96));
+    box-shadow: 0 34px 90px rgba(0, 0, 0, .52),
+                inset 0 1px 0 rgba(255, 255, 255, .055);
+  }
+
+  .board::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: -80px;
+    right: -80px;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 212, 0, .06);
+    pointer-events: none;
+  }
+
+  .board > * { position: relative; z-index: 1; }
+
+  .board-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 17px;
+  }
+
+  .board-head h2 {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+  }
+
+  .board-clock {
+    color: var(--muted-2);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .015em;
+    white-space: nowrap;
+  }
+
+  .departures { min-height: 188px; }
+
+  /* Next bus */
+  .next-card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    overflow: hidden;
+    padding: clamp(20px, 4vw, 30px);
+    border: 1px solid rgba(255, 212, 0, .24);
+    border-radius: 20px;
+    background:
+      radial-gradient(520px 300px at 100% 0%, rgba(255, 212, 0, .145), transparent 66%),
+      linear-gradient(135deg, rgba(255, 212, 0, .105), rgba(255, 212, 0, .025));
+  }
+
+  .next-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, rgba(255, 255, 255, .055), transparent 42%);
+  }
+
+  .next-main, .next-side { position: relative; }
+
+  .next-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 11px;
+    color: var(--yellow);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .165em;
+    text-transform: uppercase;
+  }
+
+  .next-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 12px rgba(255, 212, 0, .65);
+  }
+
+  .next-time {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-height: 92px;
+    line-height: .8;
+  }
+
+  .next-time .minutes {
+    display: inline-block;
+    color: var(--yellow);
+    font-size: clamp(78px, 15.5vw, 110px);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.075em;
+    line-height: .76;
+  }
+
+  .next-time .unit {
+    color: rgba(255, 255, 255, .7);
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: .01em;
+  }
+
+  .next-time.is-due .minutes {
+    font-size: clamp(52px, 11vw, 76px);
+    letter-spacing: -.045em;
+  }
+
+  .next-time.is-due .unit { display: none; }
+
+  .next-note {
+    margin-top: 15px;
+    color: var(--muted);
+    font-size: 11.5px;
+    letter-spacing: .01em;
+  }
+
+  .next-note .remark {
+    display: inline-block;
+    padding: 4px 7px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .13);
+    color: #c9cfd9;
+    font-size: 10px;
+  }
+
+  .next-side {
+    flex: 0 0 auto;
+    padding-bottom: 4px;
+    text-align: right;
+  }
+
+  .side-label {
+    color: var(--muted-2);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .side-clock {
+    margin-top: 5px;
+    color: #fff;
+    font-size: clamp(20px, 3vw, 25px);
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+  }
+
+  .side-stop {
+    margin-top: 7px;
+    color: var(--muted-2);
+    font-size: 10.5px;
+  }
+
+  /* Following buses */
+  .later-list { margin-top: 10px; }
+
+  .later-row {
+    display: grid;
+    grid-template-columns: 54px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 17px;
+    border: 1px solid transparent;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .032);
+    transition: background .2s, border-color .2s;
+  }
+
+  .later-row + .later-row { margin-top: 8px; }
+
+  .later-row:hover {
+    border-color: var(--line);
+    background: rgba(255, 255, 255, .048);
+  }
+
+  .later-label {
+    color: var(--muted-2);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .later-time {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+
+  .later-time .minutes {
+    color: #f7f8fa;
+    font-size: 28px;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.035em;
+    line-height: 1;
+  }
+
+  .later-time .unit {
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+
+  .later-time.is-due .minutes {
+    color: var(--yellow);
+    font-size: 21px;
+    letter-spacing: -.015em;
+  }
+
+  .later-time.is-due .unit { display: none; }
+
+  .later-clock {
+    color: var(--muted);
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+  }
+
+  .later-empty {
+    margin-top: 10px;
+    padding: 17px;
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    color: var(--muted-2);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* ── Empty / error states ──────────────────────────── */
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    padding: 30px 22px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .empty-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    color: var(--muted);
+    background: rgba(255, 255, 255, .045);
+  }
+
+  .empty h3 {
+    margin: 0 0 7px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+
+  .empty p {
+    max-width: 340px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  .empty button {
+    margin-top: 17px;
+    padding: 9px 15px;
+    border: 1px solid rgba(255, 212, 0, .28);
+    border-radius: 999px;
+    color: var(--yellow);
+    background: rgba(255, 212, 0, .08);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+
+  .empty button:hover { color: #161200; background: var(--yellow); }
+
+  /* ── Skeleton ──────────────────────────────────────── */
+  .skeleton-next,
+  .skeleton-row {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .05);
+    background: rgba(255, 255, 255, .025);
+  }
+
+  .skeleton-next {
+    height: 193px;
+    border-radius: 20px;
+  }
+
+  .skeleton-row {
+    height: 57px;
+    margin-top: 8px;
+    border-radius: 15px;
+  }
+
+  .skeleton-next::after,
+  .skeleton-row::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .055), transparent);
+    animation: shimmer 1.7s infinite;
+  }
+
+  .skeleton-next::before {
+    content: "";
+    position: absolute;
+    top: 26px;
+    left: 28px;
+    width: 64px;
+    height: 9px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, .08);
+  }
+
+  /* ── Board footer ──────────────────────────────────── */
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 12px;
+    padding: 11px 13px;
+    border: 1px solid rgba(255, 179, 64, .2);
+    border-radius: 12px;
+    color: #ffcf87;
+    background: rgba(255, 179, 64, .07);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
+  .notice[hidden] { display: none; }
+  .notice svg { flex: 0 0 auto; margin-top: 1px; }
+
+  .board-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 17px;
+    padding-top: 15px;
+    border-top: 1px solid var(--line);
+  }
+
+  .update {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted-2);
+    font-size: 10.5px;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .update svg { flex: 0 0 auto; opacity: .72; }
+  .update .sep { color: #414958; }
+
+  .refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: .02em;
+    cursor: pointer;
+    transition: color .2s, border-color .2s, background .2s;
+  }
+
+  .refresh:hover {
+    color: #fff;
+    border-color: var(--line-strong);
+    background: rgba(255, 255, 255, .04);
+  }
+
+  .refresh:focus-visible,
+  .empty button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--yellow);
+    outline-offset: 3px;
+  }
+
+  .refresh svg { width: 13px; height: 13px; }
+  .refresh.is-loading svg { animation: spin 1s linear infinite; }
+  .refresh:disabled { cursor: wait; opacity: .65; }
+
+  .progress-track {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    height: 2px;
+    background: rgba(255, 255, 255, .045);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 100%;
+    transform: scaleX(1);
+    transform-origin: left center;
+    background: linear-gradient(90deg, rgba(255, 212, 0, .95), #ffb800);
+    transition: transform .25s linear, background .3s;
+  }
+
+  .board.is-error .progress-bar {
+    background: linear-gradient(90deg, rgba(255, 179, 64, .9), #ff8a3d);
+  }
+
+  /* ── Page footer ───────────────────────────────────── */
+  .page-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-top: 17px;
+    padding: 0 4px;
+    color: var(--muted-2);
+    font-size: 10.5px;
+    line-height: 1.4;
+  }
+
+  .page-foot a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(255, 255, 255, .2);
+    transition: color .2s, border-color .2s;
+  }
+
+  .page-foot a:hover {
+    color: var(--yellow);
+    border-color: rgba(255, 212, 0, .5);
+  }
+
+  /* ── Motion ────────────────────────────────────────── */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes live-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(72, 224, 139, .32); }
+    55%      { box-shadow: 0 0 0 5px rgba(72, 224, 139, 0); }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  @media (max-width: 560px) {
+    .board-head { margin-bottom: 14px; }
+    .next-card { gap: 10px; }
+    .next-side { padding-bottom: 2px; }
+    .side-stop { display: none; }
+    .later-row { grid-template-columns: 46px 1fr auto; padding: 13px 14px; }
+    .board-foot { align-items: flex-end; }
+  }
+
+  @media (max-width: 390px) {
+    .brand-sub { display: none; }
+    .next-time { gap: 7px; min-height: 76px; }
+    .next-time .minutes { font-size: 72px; }
+    .next-side { max-width: 82px; }
+    .side-label { font-size: 8.5px; }
+    .side-clock { font-size: 19px; }
+    .route-title { column-gap: 10px; }
+    .route-arrow svg { width: 31px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="3.4" width="16" height="14.2" rx="3.2"></rect>
+          <path d="M7.5 7.4h9M7.5 10.7h9M8.2 17.6v2.3M15.8 17.6v2.3"></path>
+          <path d="M8.1 14.1h.01M15.9 14.1h.01" stroke-width="2.6"></path>
+        </svg>
+      </div>
+      <div class="brand-copy">
+        <span class="brand-name">CITYBUS</span>
+        <span class="brand-sub">Live departures · Hong Kong</span>
+      </div>
+    </div>
+    <div class="status-pill" id="statusPill" data-state="connecting" role="status" aria-live="polite">
+      <span class="status-dot"></span>
+      <span id="statusText">Connecting</span>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="routeTitle">
+    <div class="eyebrow">
+      <span class="route-chip">B3A</span>
+      <span class="eyebrow-text">Citybus · Real-time</span>
+    </div>
+    <h1 class="route-title" id="routeTitle">
+      <span>Fu Tai Estate</span>
+      <span class="route-arrow" aria-hidden="true">
+        <svg viewBox="0 0 44 24" fill="none">
+          <path d="M2 12h38M31 3l9 9-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </span>
+      <span>Shenzhen Bay Port</span>
+    </h1>
+    <p class="route-sub">
+      <span class="zh" lang="zh-Hant">富泰邨</span>
+      <span class="minor-arrow" aria-hidden="true">→</span>
+      <span class="zh" lang="zh-Hant">深圳灣口岸</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <span>Castle Peak Road</span>
+    </p>
+  </section>
+
+  <section class="board" id="board" aria-label="Next B3A departures from Fu Tai Estate">
+    <div class="board-head">
+      <h2>Next departures</h2>
+      <span class="board-clock" id="boardClock">—</span>
+    </div>
+
+    <div class="departures" id="departures" aria-live="polite" aria-atomic="false">
+      <div class="skeleton-next"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+    </div>
+
+    <div class="notice" id="notice" role="status" hidden>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M12 8v5M12 17h.01"></path>
+        <path d="M10.3 3.8 2.6 17.1a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
+      </svg>
+      <span id="noticeText">Live update failed.</span>
+    </div>
+
+    <div class="board-foot">
+      <div class="update">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.7"></circle>
+          <path d="M12 7.4V12l3 1.8"></path>
+        </svg>
+        <span id="updatedText">Waiting for live data…</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span id="refreshText">Refreshes in 30s</span>
+      </div>
+      <button class="refresh" id="refreshBtn" type="button" aria-label="Refresh departure times now">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.2 11a8.2 8.2 0 1 0-.6 4.6"></path>
+          <path d="M20.4 4.8V11h-6.2"></path>
+        </svg>
+        <span>Refresh</span>
+      </button>
+    </div>
+
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </section>
+
+  <footer class="page-foot">
+    <span>Real-time data from <a href="https://data.gov.hk/en/" target="_blank" rel="noopener noreferrer">DATA.GOV.HK</a> · Citybus open data</span>
+    <span>Auto-refresh every 30 sec</span>
+  </footer>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  const ROUTE = 'B3A';
+  const STOP_ID = '003261'; // Fu Tai Estate, Castle Peak Road
+  const DIRECTION = 'O';    // outbound, towards Shenzhen Bay Port
+  const REFRESH_MS = 30000;
+  const API = 'https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/' + STOP_ID + '/' + ROUTE;
+
+  const el = {
+    statusPill: document.getElementById('statusPill'),
+    statusText: document.getElementById('statusText'),
+    boardClock: document.getElementById('boardClock'),
+    departures: document.getElementById('departures'),
+    notice: document.getElementById('notice'),
+    noticeText: document.getElementById('noticeText'),
+    updatedText: document.getElementById('updatedText'),
+    refreshText: document.getElementById('refreshText'),
+    refreshBtn: document.getElementById('refreshBtn'),
+    progressBar: document.getElementById('progressBar'),
+    board: document.getElementById('board')
+  };
+
+  const clockFmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Hong_Kong',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
+  const clockSecondsFmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Hong_Kong',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
+  const dateFmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Hong_Kong',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short'
+  });
+
+  let buses = [];
+  let lastUpdated = 0;
+  let serverOffset = 0;
+  let loading = false;
+  let lastError = false;
+  let nextRefreshAt = Date.now() + REFRESH_MS;
+  let refreshTimer = null;
+
+  function now() {
+    return Date.now() + serverOffset;
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+  }
+
+  function dateLabel(ms) {
+    const parts = dateFmt.formatToParts(new Date(ms));
+    const get = (type) => (parts.find((part) => part.type === type) || {}).value || '';
+    return (get('weekday') + ' ' + get('day') + ' ' + get('month')).trim();
+  }
+
+  function minuteParts(etaMs, nowMs) {
+    const diff = etaMs - nowMs;
+    if (diff < 60000) {
+      return { label: 'Due', unit: '', due: true };
+    }
+    return {
+      label: String(Math.floor(diff / 60000)),
+      unit: 'min',
+      due: false
+    };
+  }
+
+  function setStatus(state, text) {
+    el.statusPill.dataset.state = state;
+    el.statusText.textContent = text;
+  }
+
+  function renderSkeleton() {
+    el.departures.innerHTML =
+      '<div class="skeleton-next"></div>' +
+      '<div class="skeleton-row"></div>' +
+      '<div class="skeleton-row"></div>';
+  }
+
+  function renderEmpty(isError) {
+    const icon = isError
+      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg>'
+      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.4" width="16" height="14.2" rx="3.2"></rect><path d="M7.5 7.4h9M7.5 10.7h9M8.2 17.6v2.3M15.8 17.6v2.3"></path></svg>';
+
+    const title = isError ? 'Live times unavailable' : 'No buses showing right now';
+    const copy = isError
+      ? 'Couldn’t reach the Citybus data feed. Check your connection, then try again.'
+      : 'Citybus isn’t reporting an upcoming departure from Fu Tai Estate. Try again in a moment.';
+
+    el.departures.innerHTML =
+      '<div class="empty">' +
+        '<div class="empty-icon" aria-hidden="true">' + icon + '</div>' +
+        '<h3>' + title + '</h3>' +
+        '<p>' + copy + '</p>' +
+        '<button type="button" data-action="retry">Check again</button>' +
+      '</div>';
+  }
+
+  function renderBuses() {
+    if (!buses.length) {
+      renderEmpty(false);
+      return;
+    }
+
+    const first = buses[0];
+    const firstTime = minuteParts(first.etaMs, now());
+    const firstNote = first.remark
+      ? '<span class="remark">' + escapeHtml(first.remark) + '</span>'
+      : 'Live Citybus estimate';
+
+    let html =
+      '<article class="next-card">' +
+        '<div class="next-main">' +
+          '<div class="next-label"><span class="dot" aria-hidden="true"></span>Next bus</div>' +
+          '<div class="next-time' + (firstTime.due ? ' is-due' : '') + '" data-eta="' + first.etaMs + '">' +
+            '<span class="minutes js-minutes">' + firstTime.label + '</span>' +
+            '<span class="unit js-unit">' + firstTime.unit + '</span>' +
+          '</div>' +
+          '<div class="next-note">' + firstNote + '</div>' +
+        '</div>' +
+        '<div class="next-side">' +
+          '<div class="side-label">Arriving at</div>' +
+          '<div class="side-clock">' + first.clock + '</div>' +
+          '<div class="side-stop">Fu Tai Estate</div>' +
+        '</div>' +
+      '</article>';
+
+    if (buses.length > 1) {
+      html += '<div class="later-list">';
+      for (let i = 1; i < buses.length; i += 1) {
+        const bus = buses[i];
+        const time = minuteParts(bus.etaMs, now());
+        html +=
+          '<div class="later-row">' +
+            '<span class="later-label">Then</span>' +
+            '<div class="later-time' + (time.due ? ' is-due' : '') + '" data-eta="' + bus.etaMs + '">' +
+              '<span class="minutes js-minutes">' + time.label + '</span>' +
+              '<span class="unit js-unit">' + time.unit + '</span>' +
+            '</div>' +
+            '<time class="later-clock" datetime="' + new Date(bus.etaMs).toISOString() + '">' + bus.clock + '</time>' +
+          '</div>';
+      }
+      html += '</div>';
+    } else {
+      html += '<div class="later-empty">No further departures reported yet.</div>';
+    }
+
+    el.departures.innerHTML = html;
+  }
+
+  function updateTimes() {
+    const nowMs = now();
+
+    el.departures.querySelectorAll('[data-eta]').forEach((node) => {
+      const etaMs = Number(node.dataset.eta);
+      if (!Number.isFinite(etaMs)) return;
+
+      const time = minuteParts(etaMs, nowMs);
+      const minutesEl = node.querySelector('.js-minutes');
+      const unitEl = node.querySelector('.js-unit');
+
+      if (minutesEl && minutesEl.textContent !== time.label) {
+        minutesEl.textContent = time.label;
+      }
+      if (unitEl && unitEl.textContent !== time.unit) {
+        unitEl.textContent = time.unit;
+      }
+      node.classList.toggle('is-due', time.due);
+    });
+  }
+
+  function tick() {
+    const nowMs = now();
+    const left = Math.max(0, nextRefreshAt - Date.now());
+    const seconds = Math.max(0, Math.ceil(left / 1000));
+
+    el.boardClock.textContent = dateLabel(nowMs) + ' · ' + clockFmt.format(new Date(nowMs)) + ' HKT';
+
+    if (loading) {
+      el.refreshText.textContent = 'Updating…';
+    } else if (lastError) {
+      el.refreshText.textContent = 'Retry in ' + seconds + 's';
+    } else {
+      el.refreshText.textContent = 'Refreshes in ' + seconds + 's';
+    }
+
+    el.progressBar.style.transform = 'scaleX(' + (left / REFRESH_MS) + ')';
+    updateTimes();
+  }
+
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    nextRefreshAt = Date.now() + REFRESH_MS;
+    refreshTimer = setTimeout(() => load(), REFRESH_MS);
+  }
+
+  async function load(options = {}) {
+    if (loading) return;
+    loading = true;
+
+    if (options.manual) {
+      el.refreshBtn.classList.add('is-loading');
+      el.refreshBtn.disabled = true;
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+
+    try {
+      const response = await fetch(API, {
+        cache: 'no-store',
+        signal: controller.signal,
+        headers: { Accept: 'application/json' }
+      });
+
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+      }
+
+      const payload = await response.json();
+
+      if (payload && payload.generated_timestamp) {
+        const generated = Date.parse(payload.generated_timestamp);
+        if (Number.isFinite(generated)) {
+          serverOffset = generated - Date.now();
+        }
+      }
+
+      const nowMs = now();
+      const rows = Array.isArray(payload.data) ? payload.data : [];
+
+      buses = rows
+        .filter((item) => item && item.dir === DIRECTION && item.eta)
+        .map((item) => {
+          const etaMs = Date.parse(item.eta);
+          return {
+            etaMs,
+            clock: Number.isFinite(etaMs) ? clockFmt.format(new Date(etaMs)) : '',
+            remark: String(item.rmk_en || '').trim()
+          };
+        })
+        .filter((item) => Number.isFinite(item.etaMs) && item.etaMs > nowMs - 60000)
+        .sort((a, b) => a.etaMs - b.etaMs)
+        .slice(0, 3);
+
+      lastUpdated = nowMs;
+      lastError = false;
+      el.notice.hidden = true;
+      el.board.classList.remove('is-error');
+      renderBuses();
+      updateTimes();
+
+      setStatus('live', 'Live');
+      el.updatedText.textContent = 'Updated ' + clockSecondsFmt.format(new Date(lastUpdated)) + ' HKT';
+    } catch (error) {
+      lastError = true;
+
+      if (buses.length) {
+        setStatus('error', 'Reconnecting');
+        el.noticeText.textContent = 'Couldn’t refresh the live feed. Showing the last known times.';
+        el.notice.hidden = false;
+        el.board.classList.add('is-error');
+      } else {
+        setStatus('error', 'Offline');
+        renderEmpty(true);
+        el.notice.hidden = true;
+        el.board.classList.add('is-error');
+      }
+    } finally {
+      clearTimeout(timeout);
+      loading = false;
+
+      if (options.manual) {
+        el.refreshBtn.classList.remove('is-loading');
+        el.refreshBtn.disabled = false;
+      }
+
+      scheduleRefresh();
+      tick();
+    }
+  }
+
+  el.refreshBtn.addEventListener('click', () => load({ manual: true }));
+
+  el.departures.addEventListener('click', (event) => {
+    const retry = event.target.closest('[data-action="retry"]');
+    if (retry) load({ manual: true });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && Date.now() >= nextRefreshAt) {
+      load();
+    }
+  });
+
+  tick();
+  setInterval(tick, 1000);
+  load();
+})();
+</script>
+</body>
+</html>
